@@ -6,11 +6,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY . .
+COPY ./package.json  ./
+RUN npm install
 
 RUN npm ci
 
-COPY ./ ./app
+COPY ./  ./
 
 EXPOSE 3000
 
