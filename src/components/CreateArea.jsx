@@ -1,40 +1,64 @@
 import React, { useState } from "react";
+import Zoom from "@mui/material/Zoom";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 function CreateArea(props) {
-  const [item, setItem] = useState({ title: "", content: "" });
+  const [isSelected, setIsSelected] = useState(false);
 
-  function updateItem(event) {
+  const [note, setNote] = useState({
+    title: "",
+    content: ""
+  });
+
+  function handleClick() {
+    setIsSelected(true);
+  }
+
+  function handleChange(event) {
     const { name, value } = event.target;
-    setItem((prevItem) => {
-      return { ...prevItem, [name]: value };
+
+    setNote((prevNote) => {
+      return {
+        ...prevNote,
+        [name]: value
+      };
     });
+  }
+
+  function submitNote(event) {
+    props.onAdd(note);
+    setNote({
+      title: "",
+      content: ""
+    });
+    event.preventDefault();
   }
 
   return (
     <div>
-      <form>
+      <form className="create-note">
         <input
-          onChange={updateItem}
-          value={item.title}
+          onClick={handleClick}
           name="title"
+          onChange={handleChange}
+          value={note.title}
           placeholder="Title"
         />
-        <textarea
-          onChange={updateItem}
-          value={item.content}
-          name="content"
-          placeholder="Take a note..."
-          rows="3"
-        />
-        <button
-          onClick={(event) => {
-            props.onAdd(item);
-            event.preventDefault();
-            setItem({ title: "", content: "" });
-          }}
-        >
-          Add
-        </button>
+        {isSelected ? (
+          <textarea
+            name="content"
+            onChange={handleChange}
+            value={note.content}
+            placeholder="Take a note..."
+            rows="3"
+          />
+        ) : null}
+        <Zoom in={isSelected}>
+          <Fab onClick={submitNote}>
+            <AddIcon />
+          </Fab>
+        </Zoom>
       </form>
     </div>
   );
